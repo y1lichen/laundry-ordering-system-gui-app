@@ -1,0 +1,1 @@
+## This is companion javafx desktop application for [my nccu final project](https://github.com/y1lichen/Laundry-Ordering-System)
