@@ -40,12 +40,14 @@ public class LoginSceneFactory {
     private static class LoginButtonEventHandler implements EventHandler<ActionEvent> {
         private TextField idField;
         private TextField psdField;
+        private  Label errorLabel;
         private Stage stage;
 
-        public LoginButtonEventHandler(TextField idField, TextField psdField, Stage stage) {
+        public LoginButtonEventHandler(TextField idField, TextField psdField, Label errorLabel, Stage stage) {
             super();
             this.idField = idField;
             this.psdField = psdField;
+            this.errorLabel = errorLabel;
             this.stage = stage;
         }
 
@@ -62,6 +64,7 @@ public class LoginSceneFactory {
                 naviagateToOderingScene(stage);
             } else {
                 this.psdField.setText("");
+                this.errorLabel.setText("That doesn't work. Please try again.");
             }
         }
     }
@@ -100,10 +103,16 @@ public class LoginSceneFactory {
         Label userPasswordLabel = new Label("Password:");
         userPasswordLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 25));
         grid.add(userPasswordLabel, 0, 2);
+        VBox passwordFieldVBox = new VBox();
+        passwordFieldVBox.setSpacing(5);
         PasswordField userPasswordTextField = new PasswordField();
-        grid.add(userPasswordTextField, 1, 2);
+        Label errorLabel = new Label("");
+        errorLabel.setTextFill(Color.color(1, 0, 0));
+        passwordFieldVBox.getChildren().add(userPasswordTextField);
+        passwordFieldVBox.getChildren().add(errorLabel);
+        grid.add(passwordFieldVBox, 1, 2);
         Button loginButton = new Button("Login");
-        loginButton.setOnAction(new LoginButtonEventHandler(userIdTextField, userPasswordTextField, stage));
+        loginButton.setOnAction(new LoginButtonEventHandler(userIdTextField, userPasswordTextField, errorLabel, stage));
         Label orTextLabel = new Label("or");
         Button createUserButton = new Button("Create account");
         createUserButton.setOnAction(new CreateUserButtonEventHandler(stage));
