@@ -22,7 +22,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import main.UrlList;
-import utils.PostingRequest;
+import utils.PostRequest;
 
 public class CreateUserSceneFactory {
 
@@ -45,7 +45,7 @@ public class CreateUserSceneFactory {
             int id = Integer.parseInt(idField.getText());
             String password = passwordField.getText();
             String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
-            String response = PostingRequest.postAndGetJson(UrlList.USER_CREATE_URL, inputJson);
+            String response = PostRequest.postAndGetJson(UrlList.USER_CREATE_URL, inputJson);
             JSONObject jsonObject = new JSONObject(response);
             int replyCode = jsonObject.getInt("replyCode");
             // successfully create

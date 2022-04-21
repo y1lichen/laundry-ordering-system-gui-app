@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 import main.UrlList;
 import scenes.MainScene.MainSceneFactory;
 import utils.AppData;
-import utils.PostingRequest;
+import utils.PostRequest;
 
 public class LoginSceneFactory {
     // handler for create user
@@ -56,7 +56,7 @@ public class LoginSceneFactory {
             int id = Integer.parseInt(idField.getText());
             String password = psdField.getText();
             String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
-            HttpResponse<String> response = PostingRequest.postAndGetResponse(UrlList.USER_LOGIN_URL, inputJson);
+            HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_LOGIN_URL, inputJson);
             if (response.statusCode() == 200) {
                 // successfully login
                 AppData.setId(id);

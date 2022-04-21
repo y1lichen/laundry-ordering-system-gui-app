@@ -2,7 +2,7 @@ package utils;
 
 public class AppData {
     private static int id;
-    private static String password;    
+    private static String password = null;    
 
     public static void setId(int id) {
         AppData.id = id;

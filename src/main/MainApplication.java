@@ -1,17 +1,13 @@
 package main;
 
 
-import java.net.http.HttpResponse;
-
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import scenes.LoginSceneFactory;
 import utils.AppData;
-import utils.PostingRequest;
+import utils.PostRequest;
 
 public class MainApplication extends Application {
 
@@ -35,7 +31,7 @@ public class MainApplication extends Application {
 	         int id = AppData.getId();
 	         String password = AppData.getPassword();
 	         String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
-	         PostingRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
+	         PostRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
 		}
 		super.stop();
 	}

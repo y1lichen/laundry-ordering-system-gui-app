@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 import main.UrlList;
 import scenes.LoginSceneFactory;
 import utils.AppData;
-import utils.PostingRequest;
+import utils.PostRequest;
 
 public class ChangePasswordPopupSceneFactory {
 
@@ -32,16 +32,21 @@ public class ChangePasswordPopupSceneFactory {
         Stage modalStage;
         PasswordField origninalPasswordField;
         PasswordField newPasswordField;
+        PasswordField checkNewPasswordField;
+        Label tinyLabel;
 
-        public ConfirmButtonEventHandler(Stage stage, Stage modalStage, PasswordField originalPasswordField, PasswordField newPasswordField) {
+        public ConfirmButtonEventHandler(Stage stage, Stage modalStage, PasswordField originalPasswordField, PasswordField newPasswordField, PasswordField checkNewPasswordField, Label tinyLabel) {
             this.stage = stage;
             this.origninalPasswordField = originalPasswordField;
             this.newPasswordField = newPasswordField;
+            this.checkNewPasswordField = checkNewPasswordField;
+            this.tinyLabel = tinyLabel;
         }
 
         @Override
         public void handle(ActionEvent event) {
             String originalPassword = origninalPasswordField.getText();
+            String newPassword = newPasswordField.getText();
             // check if original password is correct
             if (!(checkMatchOriginalPassword(originalPassword))) {
                 origninalPasswordField.setText("");
@@ -49,11 +54,21 @@ public class ChangePasswordPopupSceneFactory {
                 alert.setContentText("Your original password isn't correct.");
                 alert.show();
                 return;
+            } else if (newPassword.isEmpty()) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setContentText("New password can't be empty.");
+                alert.show();
+                return;
+            } else if (!(checkNewPasswordField.getText().equals(newPassword))) {
+                newPasswordField.setText("");
+                checkNewPasswordField.setText("");
+                tinyLabel.setText("Not match!");
+            	return;
             }
             // change password
             String inputJson = String.format("{\"id\": %d, \"oldPassword\": \"%s\", \"newPassword\": \"%s\"}",
-                    AppData.getId(), originalPassword, newPasswordField.getText());
-            HttpResponse<String> response = PostingRequest.postAndGetResponse(UrlList.USER_CHANGE_PASSWORD, inputJson);
+                    AppData.getId(), originalPassword, newPassword);
+            HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_CHANGE_PASSWORD_URL, inputJson);
             if (response.statusCode() == 200) {
                 stage.getScene().setRoot((LoginSceneFactory.create(stage)));
                 modalStage.close();
@@ -84,9 +99,14 @@ public class ChangePasswordPopupSceneFactory {
         PasswordField checkNewPasswordField = new PasswordField();
         pane.add(checkNewPasswordField, 1, 3);
         Label tinyLabel = new Label("Type your password again.");
+        newPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+        	if (newValue.length() != 0) {
+        		tinyLabel.setText("Type your password again.");
+        	}
+        });
         pane.add(tinyLabel, 1, 4);
         Button confirmButton = new Button("Comfirm");
-        confirmButton.setOnAction(new ConfirmButtonEventHandler(stage, modalStage, originalPasswordField, newPasswordField));
+        confirmButton.setOnAction(new ConfirmButtonEventHandler(stage, modalStage, originalPasswordField, newPasswordField, checkNewPasswordField, tinyLabel));
         pane.add(confirmButton, 1, 5);
         return scene;
     }

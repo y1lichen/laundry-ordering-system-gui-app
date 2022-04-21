@@ -5,12 +5,14 @@ import java.net.http.HttpResponse;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -19,7 +21,7 @@ import javafx.stage.Stage;
 import main.UrlList;
 import scenes.LoginSceneFactory;
 import utils.AppData;
-import utils.PostingRequest;
+import utils.PostRequest;
 
 public class SettingTabFactory {
    private static class ChangePasswordButtonEventHandler implements EventHandler<ActionEvent> {
@@ -56,7 +58,7 @@ public class SettingTabFactory {
          int id = AppData.getId();
          String password = AppData.getPassword();
          String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
-         HttpResponse<String> response = PostingRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
+         HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
          if (response.statusCode() == 200) {
             // successfully logout
             stage.getScene().setRoot((LoginSceneFactory.create(stage)));
@@ -74,17 +76,21 @@ public class SettingTabFactory {
       tab.setText("Settings");
       tab.setClosable(false);
       VBox mainVbox = new VBox();
-      mainVbox.setSpacing(20);
-      mainVbox.setAlignment(Pos.CENTER);
+      mainVbox.setSpacing(30);
       Label titleLabel = new Label("Settings");
       titleLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.EXTRA_BOLD, 30));
+      titleLabel.setPadding(new Insets(10, 0, 0, 10));
       mainVbox.getChildren().add(titleLabel);
+      VBox buttonVBox = new VBox();
+      buttonVBox.setSpacing(20);
+      buttonVBox.setAlignment(Pos.CENTER);
       Button changePasswordButton = new Button("Change Password");
       changePasswordButton.setOnAction(new ChangePasswordButtonEventHandler(stage));
       Button logoutButton = new Button("Logout");
       logoutButton.setOnAction(new LogoutButtonEventHandler(stage));
-      mainVbox.getChildren().add(changePasswordButton);
-      mainVbox.getChildren().add(logoutButton);
+      buttonVBox.getChildren().add(changePasswordButton);
+      buttonVBox.getChildren().add(logoutButton);
+      mainVbox.getChildren().add(buttonVBox);
       tab.setContent(mainVbox);
       return tab;
    }

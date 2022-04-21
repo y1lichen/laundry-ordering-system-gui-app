@@ -6,7 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class PostingRequest {
+public class PostRequest {
     public static HttpResponse<String> postAndGetResponse(String url, String json) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
@@ -23,6 +23,7 @@ public class PostingRequest {
         }
         return response;
     }
+    
     public static String postAndGetJson(String url, String json) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
