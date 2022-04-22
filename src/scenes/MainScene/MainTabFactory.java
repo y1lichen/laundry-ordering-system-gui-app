@@ -1,8 +1,5 @@
 package scenes.MainScene;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import javafx.geometry.Insets;
@@ -54,8 +51,13 @@ public class MainTabFactory {
 			// do something when value of DatePicker is changed
 			String selectedDateString = newDate.toString();
 			String urlString = UrlList.GET_AVALIABLE_RESERVATION_TIME_URL.concat("?time=" + selectedDateString);
-			String resultString = GetRequest.getJsonString(urlString);
-			System.out.println(resultString);
+			GetRequest request = new GetRequest();
+			request.sendRequest(urlString);
+			int responseCode = request.getResponseCode();
+			if (responseCode < 299) {
+				System.out.println(request.getContent());
+			}
+			request.closeConnection();
 		});
 		datePicker.setDayCellFactory(dayCellFactory);
 		mainVBox.getChildren().add(datePicker);
