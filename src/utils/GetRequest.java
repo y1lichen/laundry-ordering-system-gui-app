@@ -21,17 +21,20 @@ public class GetRequest {
 	}
 
 	public void sendRequest(String urlString) {
+		StringBuilder stringBuilder = new StringBuilder();
 		try {
 			URL url = new URL(urlString);
 			connection = (HttpURLConnection) url.openConnection();
 			responseCode = connection.getResponseCode();
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer content = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				content.append(inputLine);
+			if (responseCode < 300) {
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String inputLine;
+				while ((inputLine = in.readLine()) != null) {
+					stringBuilder.append(inputLine);
+				}
+				in.close();
+				content = stringBuilder.toString();
 			}
-			in.close();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
