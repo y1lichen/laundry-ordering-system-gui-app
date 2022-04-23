@@ -31,7 +31,6 @@ public class LoginSceneFactory {
             super();
             this.stage = stage;
         }
-        @Override
         public void handle(ActionEvent event) {
            stage.getScene().setRoot((CreateUserSceneFactory.create(stage)));
         }
@@ -51,7 +50,6 @@ public class LoginSceneFactory {
             this.stage = stage;
         }
 
-        @Override
         public void handle(ActionEvent event) {
             int id = Integer.parseInt(idField.getText());
             String password = psdField.getText();
@@ -88,7 +86,7 @@ public class LoginSceneFactory {
         VBox userIdFieldVBox = new VBox();
         grid.add(userIdFieldVBox, 1, 1);
         userIdFieldVBox.getChildren().add(userIdTextField);
-        Label tinyLabel = new Label("");
+        final Label tinyLabel = new Label("");
         userIdFieldVBox.getChildren().add(tinyLabel);
         tinyLabel.setTextFill(Color.color(1, 0, 0));
         userIdTextField.textProperty().addListener((observable, oldValue, newValue) -> {
