@@ -22,7 +22,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -83,9 +82,8 @@ public class MainTabFactory {
 			Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_RESERVE_URL, inputJson);
 			int statusCode = (Integer) response.get("statusCode");
 			if (statusCode == 200) {
-				JSONObject jsonObject = new JSONObject(response.get("content"));
-				int machineNum = jsonObject.getInt("machineNum");
-				System.out.println(machineNum);
+				JSONObject json = new JSONObject(response.get("content").toString());
+				int machineNum = json.getInt("machineNum");
 			} else {
 				PopErrorAlert.show("Unable to reserve!");
 			}
