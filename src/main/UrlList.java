@@ -8,4 +8,5 @@ public interface UrlList {
    public static final String USER_SET_CREDIT_URL = "https://laundry-ordering.herokuapp.com/users/set-credit";
    public static final String USER_CHANGE_PASSWORD_URL = "https://laundry-ordering.herokuapp.com/users/change-password";
    public static final String GET_AVAILABLE_RESERVATION_TIME_URL = "https://laundry-ordering.herokuapp.com/reservations/get-available-reservations";
+   public static final String USER_RESERVE_URL = "https://laundry-ordering.herokuapp.com/users/reserve";
 }

@@ -7,11 +7,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -21,6 +19,7 @@ import main.UrlList;
 import scenes.LoginSceneFactory;
 import utils.AppData;
 import utils.PostRequest;
+import utils.alert.PopErrorAlert;
 
 public class SettingTabFactory {
    private static class ChangePasswordButtonEventHandler implements EventHandler<ActionEvent> {
@@ -63,9 +62,7 @@ public class SettingTabFactory {
             stage.getScene().setRoot((LoginSceneFactory.create(stage)));
          } else {
             // error
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setContentText("Unable to logout, please try again.");
-            alert.show();
+        	 PopErrorAlert.show("Unable to logout, please try again.");
          }
       }
    }

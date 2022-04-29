@@ -1,7 +1,9 @@
 package scenes.MainScene;
 
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +12,11 @@ import org.json.JSONObject;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -25,6 +30,8 @@ import javafx.util.Callback;
 import main.UrlList;
 import utils.AppData;
 import utils.GetRequest;
+import utils.PostRequest;
+import utils.alert.PopErrorAlert;
 
 public class MainTabFactory {
 
@@ -52,6 +59,40 @@ public class MainTabFactory {
 		return null;
 	}
 
+	private static class ReserveButtonHandler implements EventHandler<ActionEvent> {
+
+		private LocalDate date;
+		private ListView<String> listView;
+		
+		public ReserveButtonHandler(ListView<String> listView) {
+			this.date = null;
+			this.listView = listView;
+		}
+		
+		public void setDate(LocalDate date) {
+			this.date = date;
+		}
+		
+		@Override
+		public void handle(ActionEvent event) {
+			String selectedTime = listView.getSelectionModel().getSelectedItem();
+			if (date == null || selectedTime == null) return;
+			String time = date.toString().concat(String.format("T%s:00", selectedTime));
+			String inputJson = String.format("{\"id\": %d, \"password\": \"%s\", \"time\": \"%s\"}", AppData.getId(),
+					AppData.getPassword(), time);
+			Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_RESERVE_URL, inputJson);
+			int statusCode = (Integer) response.get("statusCode");
+			if (statusCode == 200) {
+				JSONObject jsonObject = new JSONObject(response.get("content"));
+				int machineNum = jsonObject.getInt("machineNum");
+				System.out.println(machineNum);
+			} else {
+				PopErrorAlert.show("Unable to reserve!");
+			}
+		}
+		
+	}
+	
 	public static Tab create() {
 		Tab tab = new Tab();
 		tab.setText("Ordering System");
@@ -71,8 +112,15 @@ public class MainTabFactory {
 		//
 		ObservableList<String> availableTimeList = FXCollections.observableArrayList();
 		ListView<String> listView = new ListView<>(availableTimeList);
+		//
+		Button confirmButton = new Button("Reserve!");
+		ReserveButtonHandler reserveButtonHandler = new ReserveButtonHandler(listView);
+		confirmButton.setOnAction(reserveButtonHandler);
 		datePicker.valueProperty().addListener((observable, oldDate, newDate) -> {
 			// do something when value of DatePicker is changed
+			reserveButtonHandler.setDate(newDate);
+			// clear the list view
+			availableTimeList.clear();
 			String selectedDateString = newDate.toString();
 			String urlString = UrlList.GET_AVAILABLE_RESERVATION_TIME_URL.concat("?date=" + selectedDateString);
 			GetRequest request = new GetRequest();
@@ -92,7 +140,8 @@ public class MainTabFactory {
 		}
 		);
 		datePicker.setDayCellFactory(dayCellFactory);
-		mainVBox.getChildren().addAll(datePicker, listView);
+		//
+		mainVBox.getChildren().addAll(datePicker, listView, confirmButton);
 		vBox.getChildren().add(mainVBox);
 		tab.setContent(vBox);
 		return tab;
