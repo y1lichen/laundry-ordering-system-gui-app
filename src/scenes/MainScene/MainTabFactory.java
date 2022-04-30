@@ -1,9 +1,6 @@
 package scenes.MainScene;
 
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,25 +9,21 @@ import org.json.JSONObject;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.UrlList;
 import utils.AppData;
 import utils.GetRequest;
-import utils.PostRequest;
-import utils.alert.PopErrorAlert;
 
 public class MainTabFactory {
 
@@ -58,37 +51,15 @@ public class MainTabFactory {
 		return null;
 	}
 
-	private static class ReserveButtonHandler implements EventHandler<ActionEvent> {
-
-		private LocalDate date;
-		private ListView<String> listView;
-		
-		public ReserveButtonHandler(ListView<String> listView) {
-			this.date = null;
-			this.listView = listView;
-		}
-		
-		public void setDate(LocalDate date) {
-			this.date = date;
-		}
-		
-		@Override
-		public void handle(ActionEvent event) {
-			String selectedTime = listView.getSelectionModel().getSelectedItem();
-			if (date == null || selectedTime == null) return;
-			String time = date.toString().concat(String.format("T%s:00", selectedTime));
-			String inputJson = String.format("{\"id\": %d, \"password\": \"%s\", \"time\": \"%s\"}", AppData.getId(),
-					AppData.getPassword(), time);
-			Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_RESERVE_URL, inputJson);
-			int statusCode = (Integer) response.get("statusCode");
-			if (statusCode == 200) {
-				JSONObject json = new JSONObject(response.get("content").toString());
-				int machineNum = json.getInt("machineNum");
-			} else {
-				PopErrorAlert.show("Unable to reserve!");
-			}
-		}
-		
+	private static void popUpReserveView(ObservableList<String> availableTimeList, LocalDate date) {
+		Stage modalStage = new Stage();
+		modalStage.setWidth(500);
+		modalStage.setHeight(500);
+		modalStage.setResizable(false);
+		modalStage.initModality(Modality.WINDOW_MODAL);
+		modalStage.setTitle("Reserve");
+		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, date));
+		modalStage.showAndWait();
 	}
 	
 	public static Tab create() {
@@ -108,17 +79,9 @@ public class MainTabFactory {
 		//
 		DatePicker datePicker = new DatePicker();
 		//
-		ObservableList<String> availableTimeList = FXCollections.observableArrayList();
-		ListView<String> listView = new ListView<>(availableTimeList);
-		//
-		Button confirmButton = new Button("Reserve!");
-		ReserveButtonHandler reserveButtonHandler = new ReserveButtonHandler(listView);
-		confirmButton.setOnAction(reserveButtonHandler);
 		datePicker.valueProperty().addListener((observable, oldDate, newDate) -> {
 			// do something when value of DatePicker is changed
-			reserveButtonHandler.setDate(newDate);
-			// clear the list view
-			availableTimeList.clear();
+			ObservableList<String> availableTimeList = FXCollections.observableArrayList();
 			String selectedDateString = newDate.toString();
 			String urlString = UrlList.GET_AVAILABLE_RESERVATION_TIME_URL.concat("?date=" + selectedDateString);
 			GetRequest request = new GetRequest();
@@ -135,11 +98,13 @@ public class MainTabFactory {
 				}
 			}
 			request.closeConnection();
+			// popup reserve-view
+			popUpReserveView(availableTimeList, newDate);
 		}
 		);
 		datePicker.setDayCellFactory(dayCellFactory);
 		//
-		mainVBox.getChildren().addAll(datePicker, listView, confirmButton);
+		mainVBox.getChildren().addAll(datePicker);
 		vBox.getChildren().add(mainVBox);
 		tab.setContent(vBox);
 		return tab;

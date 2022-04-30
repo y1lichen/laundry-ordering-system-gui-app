@@ -86,8 +86,6 @@ public class ChangePasswordPopupSceneFactory {
         pane.setVgap(10);
         pane.setAlignment(Pos.CENTER);
         Scene scene = new Scene(pane);
-        VBox vbox = new VBox();
-        vbox.setSpacing(10);
         Label orginalPasswordLabel = new Label("Original password: ");
         PasswordField originalPasswordField = new PasswordField();
         pane.add(orginalPasswordLabel, 0, 1);
