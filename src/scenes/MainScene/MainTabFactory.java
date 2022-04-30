@@ -51,14 +51,14 @@ public class MainTabFactory {
 		return null;
 	}
 
-	private static void popUpReserveView(ObservableList<String> availableTimeList, LocalDate date) {
+	private static void popUpReserveView(ObservableList<String> availableTimeList, DatePicker picker) {
 		Stage modalStage = new Stage();
 		modalStage.setWidth(500);
 		modalStage.setHeight(500);
 		modalStage.setResizable(false);
 		modalStage.initModality(Modality.WINDOW_MODAL);
 		modalStage.setTitle("Reserve");
-		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, date));
+		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, picker));
 		modalStage.showAndWait();
 	}
 	
@@ -81,6 +81,7 @@ public class MainTabFactory {
 		//
 		datePicker.valueProperty().addListener((observable, oldDate, newDate) -> {
 			// do something when value of DatePicker is changed
+			if (newDate == null) return;
 			ObservableList<String> availableTimeList = FXCollections.observableArrayList();
 			String selectedDateString = newDate.toString();
 			String urlString = UrlList.GET_AVAILABLE_RESERVATION_TIME_URL.concat("?date=" + selectedDateString);
@@ -99,7 +100,7 @@ public class MainTabFactory {
 			}
 			request.closeConnection();
 			// popup reserve-view
-			popUpReserveView(availableTimeList, newDate);
+			popUpReserveView(availableTimeList, datePicker);
 		}
 		);
 		datePicker.setDayCellFactory(dayCellFactory);
