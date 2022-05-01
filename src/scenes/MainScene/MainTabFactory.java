@@ -1,12 +1,15 @@
 package scenes.MainScene;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -15,6 +18,9 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -24,8 +30,11 @@ import javafx.util.Callback;
 import main.UrlList;
 import utils.AppData;
 import utils.GetRequest;
+import utils.PostRequest;
 
 public class MainTabFactory {
+	
+	private static ObservableList<ReservationData> allReservationData = FXCollections.observableArrayList();
 
 	final static Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
 		@Override
@@ -61,6 +70,38 @@ public class MainTabFactory {
 		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, picker));
 		modalStage.showAndWait();
 	}
+	
+	private static String getMachineLocationString(int machineNum) {
+		int floor = machineNum / 3;
+		int num = machineNum % 3;
+		return String.format("%df-%d", floor+1, num);
+	}
+	
+	private static String parsingTimeString(String input) {
+		String output = input.substring(0,10)+' '+ input.substring(11, input.length() - 3);
+		return output;
+	}
+
+	public static void fetchAllReservation() {
+		String inputJson = String.format("{\"id\": %d, \"password\": \"%s\", \"date\": \"\"}", AppData.getId(), AppData.getPassword());
+		Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_GET_ALL_RESERVATIONS, inputJson);
+		int statusCode = (int) response.get("statusCode");
+		allReservationData.clear();
+		if (statusCode == 200) {
+			String jsonString = (String) response.get("content");
+			JSONArray jsonArray = new JSONArray(jsonString);
+			for (int i=0; i<jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				int id = jsonObject.getInt("id");
+				JSONObject infoObject = jsonObject.getJSONObject("info");
+				int machineNum = infoObject.getInt("machine_num");
+				String time = infoObject.getString("time");
+				ReservationData data = new ReservationData(id, getMachineLocationString(machineNum), parsingTimeString(time));
+				allReservationData.add(data);
+			}
+		}
+	}
+	
 	
 	public static Tab create() {
 		Tab tab = new Tab();
@@ -105,9 +146,30 @@ public class MainTabFactory {
 		);
 		datePicker.setDayCellFactory(dayCellFactory);
 		//
-		mainVBox.getChildren().addAll(datePicker);
+		TableView<ReservationData> table = new TableView<ReservationData>();
+		TableColumn<ReservationData, Integer> idCol = new TableColumn<>("id");
+		TableColumn<ReservationData, String> machineCol = new TableColumn<>("machine"); 
+		TableColumn<ReservationData, String> timeCol = new TableColumn<>("time");
+		timeCol.setPrefWidth(180);
+		//
+		idCol.setCellValueFactory(new PropertyValueFactory<ReservationData, Integer>("id"));
+		machineCol.setCellValueFactory(new PropertyValueFactory<ReservationData, String>("machine"));
+		timeCol.setCellValueFactory(new PropertyValueFactory<ReservationData, String>("time"));
+		//
+		table.setItems(allReservationData);
+		table.setEditable(false);
+		table.setMaxWidth(400);
+		table.getColumns().add(idCol);
+		table.getColumns().add(machineCol);
+		table.getColumns().add(timeCol);
+		table.getColumns().forEach(e -> {
+			e.setReorderable(false);
+			e.setSortable(false);
+		});
+		mainVBox.getChildren().addAll(datePicker, table);
 		vBox.getChildren().add(mainVBox);
 		tab.setContent(vBox);
+		fetchAllReservation();
 		return tab;
 	}
 }

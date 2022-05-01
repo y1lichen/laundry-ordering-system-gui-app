@@ -47,6 +47,7 @@ public class ReservePopUpSceneFactory {
 			if (statusCode == 417) {
 				PopErrorAlert.show("You can only have one reservation per day.");
 			}
+			MainTabFactory.fetchAllReservation();
 			picker.setValue(null);
 			modalStage.close();
 		}
