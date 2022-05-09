@@ -1,5 +1,7 @@
 package scenes.MainScene;
 
+
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -8,15 +10,17 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -31,6 +35,7 @@ import main.UrlList;
 import utils.AppData;
 import utils.GetRequest;
 import utils.PostRequest;
+import utils.alert.PopErrorAlert;
 
 public class MainTabFactory {
 	
@@ -102,8 +107,28 @@ public class MainTabFactory {
 		}
 	}
 	
+	private static void deleteSelectedItemById(int id) {
+		String inputJson = String.format("{\"userId\": %d, \"password\": \"%s\", \"reservationId\": \"%d\"}",
+                AppData.getId(), AppData.getPassword(), id);
+		HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_DELETE_RESEVATION_URL, inputJson);
+		if (response.statusCode() > 299) {
+			PopErrorAlert.show("Unable to remove the reservation.");
+		}
+	}
 	
 	public static Tab create() {
+		class DeleteMenuItemHandler implements EventHandler<ActionEvent> {
+			private TableView<ReservationData> table;
+			public DeleteMenuItemHandler(TableView<ReservationData> table) {
+				this.table = table;
+			}
+			@Override
+			public void handle(ActionEvent event) {
+				ReservationData data = (ReservationData) table.getSelectionModel().getSelectedItem();
+				deleteSelectedItemById(data.getId());
+				fetchAllReservation();
+			}
+		}
 		Tab tab = new Tab();
 		tab.setText("Ordering System");
 		tab.setClosable(false);
@@ -147,6 +172,11 @@ public class MainTabFactory {
 		datePicker.setDayCellFactory(dayCellFactory);
 		//
 		TableView<ReservationData> table = new TableView<ReservationData>();
+		ContextMenu menu = new ContextMenu();
+		MenuItem deleteMenuItem = new MenuItem("delete");
+		deleteMenuItem.setOnAction(new DeleteMenuItemHandler(table));
+		menu.getItems().add(deleteMenuItem);
+		table.setContextMenu(menu);
 		TableColumn<ReservationData, Integer> idCol = new TableColumn<>("id");
 		TableColumn<ReservationData, String> machineCol = new TableColumn<>("machine"); 
 		TableColumn<ReservationData, String> timeCol = new TableColumn<>("time");
@@ -160,6 +190,7 @@ public class MainTabFactory {
 		table.setEditable(false);
 		table.setMaxWidth(400);
 		table.getColumns().add(idCol);
+		idCol.setVisible(false);
 		table.getColumns().add(machineCol);
 		table.getColumns().add(timeCol);
 		table.getColumns().forEach(e -> {
