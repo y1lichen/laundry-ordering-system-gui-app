@@ -65,14 +65,14 @@ public class MainTabFactory {
 		return null;
 	}
 
-	private static void popUpReserveView(ObservableList<String> availableTimeList, DatePicker picker) {
+	private static void popUpReserveView(ObservableList<String> availableTimeList, LocalDate date) {
 		Stage modalStage = new Stage();
 		modalStage.setWidth(500);
 		modalStage.setHeight(500);
 		modalStage.setResizable(false);
 		modalStage.initModality(Modality.WINDOW_MODAL);
 		modalStage.setTitle("Reserve");
-		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, picker));
+		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, date));
 		modalStage.showAndWait();
 	}
 	
@@ -166,7 +166,7 @@ public class MainTabFactory {
 			}
 			request.closeConnection();
 			// popup reserve-view
-			popUpReserveView(availableTimeList, datePicker);
+			popUpReserveView(availableTimeList, datePicker.getValue());
 		}
 		);
 		datePicker.setDayCellFactory(dayCellFactory);

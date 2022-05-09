@@ -24,19 +24,18 @@ public class ReservePopUpSceneFactory {
 	private static class ReserveButtonHandler implements EventHandler<ActionEvent> {
 
 		private Stage modalStage;
-		private DatePicker picker;
+		private LocalDate date;
 		private ListView<String> listView;
 
-		public ReserveButtonHandler(Stage modalStage, ListView<String> listView, DatePicker picker) {
+		public ReserveButtonHandler(Stage modalStage, ListView<String> listView, LocalDate date) {
 			this.modalStage = modalStage;
-			this.picker = picker;
+			this.date = date;
 			this.listView = listView;
 		}
 
 		@Override
 		public void handle(ActionEvent event) {
 			String selectedTime = listView.getSelectionModel().getSelectedItem();
-			LocalDate date = picker.getValue();
 			if (date == null || selectedTime == null)
 				return;
 			String time = date.toString().concat(String.format("T%s:00", selectedTime));
@@ -48,12 +47,11 @@ public class ReservePopUpSceneFactory {
 				PopErrorAlert.show("You can only have one reservation per day.");
 			}
 			MainTabFactory.fetchAllReservation();
-			picker.setValue(null);
 			modalStage.close();
 		}
 	}
 
-	public static Scene create(Stage modalStage, ObservableList<String> availableTimeList, DatePicker picker) {
+	public static Scene create(Stage modalStage, ObservableList<String> availableTimeList, LocalDate date) {
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		grid.setVgap(10);
@@ -61,7 +59,7 @@ public class ReservePopUpSceneFactory {
 		ListView<String> listView = new ListView<>(availableTimeList);
 		grid.add(listView, 1, 1);
 		Button confirmButton = new Button("Confirm");
-		confirmButton.setOnAction(new ReserveButtonHandler(modalStage, listView, picker));
+		confirmButton.setOnAction(new ReserveButtonHandler(modalStage, listView, date));
 		grid.add(confirmButton, 1, 2);
 		return scene;
 	}
