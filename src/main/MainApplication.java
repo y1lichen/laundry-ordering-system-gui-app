@@ -2,6 +2,7 @@ package main;
 
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -21,6 +22,7 @@ public class MainApplication extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(600);
 		primaryStage.setHeight(800);
+		primaryStage.setOnCloseRequest(e -> Platform.exit());
 		primaryStage.setResizable(false);
 		primaryStage.show();
 	}
