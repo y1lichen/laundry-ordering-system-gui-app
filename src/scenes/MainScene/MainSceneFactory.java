@@ -2,14 +2,19 @@ package scenes.MainScene;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainSceneFactory {
-	public static TabPane create(Stage stage) {
-		TabPane pane = new TabPane();
+	
+	public static StackPane create(Stage stage) {
+		StackPane pane = new StackPane();
+		pane.setId("MainScene");
+		TabPane tabPane = new TabPane();
 		Tab mainTab = MainTabFactory.create();
 		Tab settingsTab = SettingTabFactory.create(stage);
-		pane.getTabs().addAll(mainTab, settingsTab);
+		tabPane.getTabs().addAll(mainTab, settingsTab);
+		pane.getChildren().add(tabPane);
 		return pane;
 	}
 }

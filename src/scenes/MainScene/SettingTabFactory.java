@@ -15,6 +15,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.ApplicationMenuBar;
 import main.UrlList;
 import scenes.LoginSceneFactory;
 import utils.AppData;
@@ -60,6 +61,7 @@ public class SettingTabFactory {
          if (response.statusCode() == 200) {
             // successfully logout
             stage.getScene().setRoot((LoginSceneFactory.create(stage)));
+            ApplicationMenuBar.addMenuToScene(stage.getScene());
          } else {
             // error
         	 PopErrorAlert.show("Unable to logout, please try again.");
