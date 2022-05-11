@@ -1,16 +1,22 @@
 package scenes;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.json.JSONObject;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -50,7 +56,7 @@ public class CreateUserSceneFactory {
 			if (statusCode == 409) {
 				PopErrorAlert.show("User already exist.");
 			} else if (statusCode == 200) {
-				stage.getScene().setRoot((LoginSceneFactory.create(stage)));
+				goLoginScene(stage);
 				return;
 			} else {
 				PopErrorAlert.show("Unable to create user, please try again.");
@@ -60,8 +66,13 @@ public class CreateUserSceneFactory {
 			checkPasswordField.setText("");
 		}
 	}
+	
+	private static void goLoginScene(Stage stage) {
+		stage.getScene().setRoot((LoginSceneFactory.create(stage)));
+	}
 
 	public static Pane create(Stage stage) {
+		BorderPane pane = new BorderPane();
 		GridPane grid = new GridPane();
 		grid.setVgap(20);
 		grid.setHgap(10);
@@ -69,6 +80,21 @@ public class CreateUserSceneFactory {
 		Text title = new Text("Create new account");
 		title.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.EXTRA_BOLD, 40));
 		grid.add(title, 0, 0, 2, 1);
+		Button backButton = new Button();
+		backButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				goLoginScene(stage);
+			}
+		});
+		Image image;
+		try {
+			image = new Image(new FileInputStream("assets/go-back.png"), 16, 16, true, true);
+			backButton.setGraphic(new ImageView(image));
+		} catch (FileNotFoundException e) {
+			PopErrorAlert.show(e.getMessage());
+			backButton.setText("Go back");
+		}
 		Label userIdLabel = new Label("Id:");
 		userIdLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 25));
 		grid.add(userIdLabel, 0, 1);
@@ -111,6 +137,8 @@ public class CreateUserSceneFactory {
 		createUserBtn.setOnAction(
 				new CreateUserButtonEventHandler(stage, userIdTextField, userPasswordTextField, checkPsdField));
 		grid.add(createUserBtn, 1, 4);
-		return grid;
+		pane.setTop(backButton);
+		pane.setCenter(grid);
+		return pane;
 	}
 }

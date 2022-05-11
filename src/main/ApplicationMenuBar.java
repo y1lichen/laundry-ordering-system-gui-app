@@ -10,7 +10,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import scenes.MainScene.MainSceneTabPane;
 import scenes.MainScene.MainTabFactory;
 
 
