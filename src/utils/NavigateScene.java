@@ -1,8 +1,8 @@
 package utils;
 
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import main.ApplicationMenuBar;
 
 public class NavigateScene {
@@ -10,7 +10,7 @@ public class NavigateScene {
 	private static NavigateScene navigateScene = new NavigateScene();
 	
 	private static Scene scene = null;
-	private static VBox vBox = new VBox();
+	private static BorderPane borderPane = new BorderPane();
 	
 	public static void setScene(Scene scene) {
 		NavigateScene.scene = scene;
@@ -22,10 +22,10 @@ public class NavigateScene {
 		} else {
 			ApplicationMenuBar.disableRefreshMenuItem();
 		}
-		vBox.getChildren().clear();
-		vBox.getChildren().add(ApplicationMenuBar.getMenuBar());
-		vBox.getChildren().add(pane);
-		scene.setRoot(vBox);
+		borderPane.getChildren().clear();
+		borderPane.setTop(ApplicationMenuBar.getMenuBar());
+		borderPane.setCenter(pane);
+		scene.setRoot(borderPane);
 	}
 
 	public static NavigateScene getNavigateScene() {
