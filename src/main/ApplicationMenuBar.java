@@ -33,6 +33,10 @@ public final class ApplicationMenuBar extends MenuBar {
 		menu.getItems().add(refreshItem);
 		addQuitMenuItem();
 		this.getMenus().add(menu);
+		String os = System.getProperty("os.name");
+		if (os != null && os.startsWith("Mac")) {
+			this.setUseSystemMenuBar(true);
+		}
 	}
 	
 	private void addQuitMenuItem() {

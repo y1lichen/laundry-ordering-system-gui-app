@@ -19,6 +19,7 @@ public class MainApplication extends Application {
 		primaryStage.setTitle("Laundry Ordering System");
 		scene = new Scene(new Parent() {
 		});
+		String os = System.getProperty("os.name");
 		NavigateScene.setScene(scene);
 		NavigateScene.changePane(LoginSceneFactory.create(primaryStage));
 		primaryStage.setScene(scene);
