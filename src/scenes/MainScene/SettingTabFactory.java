@@ -2,7 +2,6 @@ package scenes.MainScene;
 
 import java.net.http.HttpResponse;
 
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,6 +18,7 @@ import main.ApplicationMenuBar;
 import main.UrlList;
 import scenes.LoginSceneFactory;
 import utils.AppData;
+import utils.NavigateScene;
 import utils.PostRequest;
 import utils.alert.PopErrorAlert;
 
@@ -60,8 +60,7 @@ public class SettingTabFactory {
          HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
          if (response.statusCode() == 200) {
             // successfully logout
-            stage.getScene().setRoot((LoginSceneFactory.create(stage)));
-            ApplicationMenuBar.addMenuToScene(stage.getScene());
+            NavigateScene.changePane(LoginSceneFactory.create(stage));
          } else {
             // error
         	 PopErrorAlert.show("Unable to logout, please try again.");

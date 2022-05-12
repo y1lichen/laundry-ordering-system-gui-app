@@ -2,12 +2,8 @@ package scenes;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Map;
-
-import org.json.JSONObject;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,8 +21,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import main.UrlList;
+import utils.NavigateScene;
 import utils.PostRequest;
 import utils.alert.PopErrorAlert;
 
@@ -68,7 +64,7 @@ public class CreateUserSceneFactory {
 	}
 	
 	private static void goLoginScene(Stage stage) {
-		stage.getScene().setRoot((LoginSceneFactory.create(stage)));
+		NavigateScene.changePane(LoginSceneFactory.create(stage));
 	}
 
 	public static Pane create(Stage stage) {

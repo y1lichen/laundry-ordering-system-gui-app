@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import scenes.LoginSceneFactory;
 import utils.AppData;
+import utils.NavigateScene;
 import utils.PostRequest;
 
 public class MainApplication extends Application {
@@ -18,8 +19,8 @@ public class MainApplication extends Application {
 		primaryStage.setTitle("Laundry Ordering System");
 		scene = new Scene(new Parent() {
 		});
-		scene.setRoot(LoginSceneFactory.create(primaryStage));
-		ApplicationMenuBar.addMenuToScene(scene);
+		NavigateScene.setScene(scene);
+		NavigateScene.changePane(LoginSceneFactory.create(primaryStage));
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(600);
 		primaryStage.setHeight(800);

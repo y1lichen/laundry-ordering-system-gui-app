@@ -22,6 +22,7 @@ import main.ApplicationMenuBar;
 import main.UrlList;
 import scenes.MainScene.MainSceneFactory;
 import utils.AppData;
+import utils.NavigateScene;
 import utils.PostRequest;
 
 public class LoginSceneFactory {
@@ -36,8 +37,7 @@ public class LoginSceneFactory {
 
 		public void handle(ActionEvent event) {
 			Scene scene = stage.getScene();
-			scene.setRoot((CreateUserSceneFactory.create(stage)));
-			ApplicationMenuBar.addMenuToScene(scene);
+			NavigateScene.changePane(CreateUserSceneFactory.create(stage));
 		}
 	}
 
@@ -75,8 +75,7 @@ public class LoginSceneFactory {
 
 	private static void naviagateToOderingScene(Stage stage) {
 		Scene scene = stage.getScene();
-		scene.setRoot((MainSceneFactory.create(stage)));
-		ApplicationMenuBar.addMenuToScene(scene);
+		NavigateScene.changePane(MainSceneFactory.create(stage));
 	}
 
 	public static Pane create(Stage stage) {

@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import scenes.MainScene.MainTabFactory;
 
@@ -22,8 +21,6 @@ public final class ApplicationMenuBar extends MenuBar {
 	// constructor
 	public ApplicationMenuBar() {
 		super();
-		this.useSystemMenuBarProperty().set(true);
-		this.setUseSystemMenuBar(true);
 		menu = new Menu("File");
 		refreshItem = new MenuItem("Refresh");
 		refreshItem.setDisable(true);
@@ -56,18 +53,8 @@ public final class ApplicationMenuBar extends MenuBar {
 		refreshItem.setDisable(false);
 	}
 	
-	public static void addMenuToScene(Scene scene) {
-		Parent rootNode = scene.getRoot();
-		if (rootNode instanceof Pane) {
-			Pane rootPane = (Pane) rootNode;
-			String id = rootPane.getId();
-			if (id != null && id.equals("MainScene")) {
-				refreshItem.setDisable(false);
-			} else {
-				refreshItem.setDisable(true);
-			}
-			rootPane.getChildren().add(menuBar);
-		}
+	public static void disableRefreshMenuItem() {
+		refreshItem.setDisable(true);
 	}
 
 	public static ApplicationMenuBar getMenuBar() {
