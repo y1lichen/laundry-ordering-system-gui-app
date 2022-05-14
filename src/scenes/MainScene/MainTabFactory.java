@@ -65,8 +65,9 @@ public class MainTabFactory {
 		return null;
 	}
 
-	private static void popUpReserveView(ObservableList<String> availableTimeList, LocalDate date) {
+	private static void popUpReserveView(ObservableList<String> availableTimeList, DatePicker datePicker) {
 		Stage modalStage = new Stage();
+		LocalDate date = datePicker.getValue();
 		modalStage.setWidth(500);
 		modalStage.setHeight(500);
 		modalStage.setResizable(false);
@@ -74,6 +75,7 @@ public class MainTabFactory {
 		modalStage.setTitle("Reserve");
 		modalStage.setScene(ReservePopUpSceneFactory.create(modalStage, availableTimeList, date));
 		modalStage.showAndWait();
+		datePicker.setValue(null);
 	}
 	
 	private static String getMachineLocationString(int machineNum) {
@@ -166,17 +168,12 @@ public class MainTabFactory {
 			}
 			request.closeConnection();
 			// popup reserve-view
-			popUpReserveView(availableTimeList, datePicker.getValue());
+			popUpReserveView(availableTimeList, datePicker);
 		}
 		);
 		datePicker.setDayCellFactory(dayCellFactory);
 		//
 		TableView<ReservationData> table = new TableView<ReservationData>();
-		ContextMenu menu = new ContextMenu();
-		MenuItem deleteMenuItem = new MenuItem("delete");
-		deleteMenuItem.setOnAction(new DeleteMenuItemHandler(table));
-		menu.getItems().add(deleteMenuItem);
-		table.setContextMenu(menu);
 		TableColumn<ReservationData, Integer> idCol = new TableColumn<>("id");
 		TableColumn<ReservationData, String> machineCol = new TableColumn<>("machine"); 
 		TableColumn<ReservationData, String> timeCol = new TableColumn<>("time");
@@ -197,6 +194,13 @@ public class MainTabFactory {
 			e.setReorderable(false);
 			e.setSortable(false);
 		});
+		// add right click menu
+		ContextMenu menu = new ContextMenu();
+		MenuItem deleteMenuItem = new MenuItem("delete");
+		deleteMenuItem.setOnAction(new DeleteMenuItemHandler(table));
+		menu.getItems().add(deleteMenuItem);
+		table.setContextMenu(menu);
+		//
 		mainVBox.getChildren().addAll(datePicker, table);
 		vBox.getChildren().add(mainVBox);
 		tab.setContent(vBox);
