@@ -36,6 +36,7 @@ public class ChangePasswordPopupSceneFactory {
 
         public ConfirmButtonEventHandler(Stage stage, Stage modalStage, PasswordField originalPasswordField, PasswordField newPasswordField, PasswordField checkNewPasswordField, Label tinyLabel) {
             this.stage = stage;
+            this.modalStage = modalStage;
             this.origninalPasswordField = originalPasswordField;
             this.newPasswordField = newPasswordField;
             this.checkNewPasswordField = checkNewPasswordField;
