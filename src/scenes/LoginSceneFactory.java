@@ -1,6 +1,9 @@
 package scenes;
 
 import java.net.http.HttpResponse;
+import java.util.Map;
+
+import org.json.JSONObject;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -60,11 +63,14 @@ public class LoginSceneFactory {
 			int id = Integer.parseInt(idField.getText());
 			String password = psdField.getText();
 			String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
-			HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_LOGIN_URL, inputJson);
-			if (response.statusCode() == 200) {
+			Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_LOGIN_URL, inputJson);
+			int statusCode = (int) response.get("statusCode");
+			if (statusCode == 200) {
 				// successfully login
+				String jsonString = (String) response.get("content");
+				JSONObject json = new JSONObject(jsonString);
 				AppData.setId(id);
-				AppData.setPassword(password);
+				AppData.setToken(json.getString("token"));
 				naviagateToOderingScene(stage);
 			} else {
 				this.psdField.setText("");

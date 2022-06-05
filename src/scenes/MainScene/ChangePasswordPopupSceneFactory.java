@@ -20,11 +20,6 @@ import utils.PostRequest;
 
 public class ChangePasswordPopupSceneFactory {
 
-    private static boolean checkMatchOriginalPassword(String originalPassword) {
-        if (originalPassword.equals(AppData.getPassword()))
-            return true;
-        return false;
-    }
 
     public static class ConfirmButtonEventHandler implements EventHandler<ActionEvent> {
         Stage stage;
@@ -43,18 +38,12 @@ public class ChangePasswordPopupSceneFactory {
             this.tinyLabel = tinyLabel;
         }
 
+
         @Override
         public void handle(ActionEvent event) {
             String originalPassword = origninalPasswordField.getText();
             String newPassword = newPasswordField.getText();
-            // check if original password is correct
-            if (!(checkMatchOriginalPassword(originalPassword))) {
-                origninalPasswordField.setText("");
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setContentText("Your original password isn't correct.");
-                alert.show();
-                return;
-            } else if (newPassword.isEmpty()) {
+            if (newPassword.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setContentText("New password can't be empty.");
                 alert.show();
@@ -74,6 +63,8 @@ public class ChangePasswordPopupSceneFactory {
                 modalStage.close();
             } else {
                 // if error occurs ...
+            	newPasswordField.setText("");
+            	checkNewPasswordField.setText("");
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setContentText("Unable to change your password.");
                 alert.show();

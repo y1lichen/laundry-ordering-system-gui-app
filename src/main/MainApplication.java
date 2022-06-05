@@ -32,10 +32,10 @@ public class MainApplication extends Application {
 
 	@Override
 	public void stop() throws Exception {
-		if (AppData.getPassword() != null) {
+		if (AppData.getToken() != null) {
 			int id = AppData.getId();
-			String password = AppData.getPassword();
-			String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
+			String token = AppData.getToken();
+			String inputJson = String.format("{\"id\": %d, \"token\": \"%s\"}", id, token);
 			PostRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
 		}
 		super.stop();

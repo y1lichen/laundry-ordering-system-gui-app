@@ -36,8 +36,8 @@ public class ReservePopUpSceneFactory {
 			if (date == null || selectedTime == null)
 				return;
 			String time = date.toString().concat(String.format("T%s:00", selectedTime));
-			String inputJson = String.format("{\"id\": %d, \"password\": \"%s\", \"time\": \"%s\"}", AppData.getId(),
-					AppData.getPassword(), time);
+			String inputJson = String.format("{\"id\": %d, \"token\": \"%s\", \"time\": \"%s\"}", AppData.getId(),
+					AppData.getToken(), time);
 			Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_RESERVE_URL, inputJson);
 			int statusCode = (Integer) response.get("statusCode");
 			if (statusCode == 417) {

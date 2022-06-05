@@ -55,8 +55,8 @@ public class SettingTabFactory {
       @Override
       public void handle(ActionEvent event) {
          int id = AppData.getId();
-         String password = AppData.getPassword();
-         String inputJson = String.format("{\"id\": %d, \"password\": \"%s\"}", id, password);
+         String token = AppData.getToken();
+         String inputJson = String.format("{\"id\": %d, \"token\": \"%s\"}", id, token);
          HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_LOGOUT_URL, inputJson);
          if (response.statusCode() == 200) {
             // successfully logout

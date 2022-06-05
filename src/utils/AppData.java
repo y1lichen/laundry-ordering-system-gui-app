@@ -2,7 +2,7 @@ package utils;
 
 public class AppData {
     private static int id;
-    private static String password = null;    
+    private static String token = null;    
 
     public static void setId(int id) {
         AppData.id = id;
@@ -12,11 +12,12 @@ public class AppData {
         return id;
     }
 
-    public static void setPassword(String password) {
-        AppData.password = password;
+
+    public static void setToken(String token) {
+        AppData.token = token;
     }
 
-    public static String getPassword() {
-        return password;
+    public static String getToken() {
+        return token;
     }
 }

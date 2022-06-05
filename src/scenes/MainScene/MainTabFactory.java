@@ -90,7 +90,7 @@ public class MainTabFactory {
 	}
 
 	public static void fetchAllReservation() {
-		String inputJson = String.format("{\"id\": %d, \"password\": \"%s\", \"date\": \"\"}", AppData.getId(), AppData.getPassword());
+		String inputJson = String.format("{\"id\": %d, \"token\": \"%s\", \"date\": \"\"}", AppData.getId(), AppData.getToken());
 		Map<String, Object> response = PostRequest.postAndGetJson(UrlList.USER_GET_ALL_RESERVATIONS, inputJson);
 		int statusCode = (int) response.get("statusCode");
 		allReservationData.clear();
@@ -110,8 +110,8 @@ public class MainTabFactory {
 	}
 	
 	private static void deleteSelectedItemById(int id) {
-		String inputJson = String.format("{\"userId\": %d, \"password\": \"%s\", \"reservationId\": \"%d\"}",
-                AppData.getId(), AppData.getPassword(), id);
+		String inputJson = String.format("{\"userId\": %d, \"token\": \"%s\", \"reservationId\": \"%d\"}",
+                AppData.getId(), AppData.getToken(), id);
 		HttpResponse<String> response = PostRequest.postAndGetResponse(UrlList.USER_DELETE_RESEVATION_URL, inputJson);
 		if (response.statusCode() > 299) {
 			PopErrorAlert.show("Unable to remove the reservation.");
